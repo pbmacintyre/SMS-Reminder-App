@@ -6,7 +6,7 @@
 /* ================= */
 
 function app_name() {
-	return "Video Meetings API";
+	return "SMS Reminder App";
 }
 
 /* ================== */
@@ -33,122 +33,94 @@ function ringcentral_sdk() {
 		try {
 			$platform->login(["jwt" => $jwt_key]);
 		} catch (\RingCentral\SDK\Http\ApiException $e) {
-			$sdk = 0;
-			// exit("<br/><br/>Unable to authenticate to platform. Check your RingCentral credentials. <br/><br/>") ;
+			echo_spaces("SDK Failure", $e->getMessage());
 		}
 	}
 	$controller = array('SDK' => $sdk, 'platform' => $platform);
 	return $controller;
 }
 
-function list_tm_names() {
-	$controller = ringcentral_sdk();
-	$platform = $controller['platform'];
 
-	$endpoint = "/team-messaging/v1/recent/chats";
-
-	$params = [
-		'type' => array('Direct',),
-//        'type' => array( 'Everyone', 'Group', 'Personal', 'Direct', 'Team' ),
-		'recordCount' => 14,
-	];
-
-	try {
-		$response = $platform->get($endpoint, $params);
-		$resp_array = json_decode(json_encode($response->json()), true);
-//		echo_spaces("chats array", $resp_array);
-	} catch (\RingCentral\SDK\Http\ApiException $e) {
-		echo_spaces("Chats Error info", $e->getMessage());
+function list_existing_events() {
+	$table = "events";
+	$columns_data = array ("event_id", "event_summary", "event_date");
+	$db_result = db_record_select ($table, $columns_data, "", "", $orderby = "event_date");
+	echo "<tr >
+          <td class='addform_left_col_even'>
+          <p style='display: inline;'>Currently planned Events</p> 
+          </td>          
+          <td class='addform_right_col_even'>
+          <select name='selected_event' >";
+	foreach ($db_result as $row) {
+		$event_info = $row['event_summary'] . ": " . date("M j, Y", strtotime($row['event_date']));
+		echo "<option value='" . $row['event_id'] . "'>" . $event_info . "</option>";
 	}
-
-	foreach ($resp_array as $chat) {
-		foreach ($chat as $details) {
-//			 echo_spaces("details", $details);
-//			$member_list[$details['id']] = $details['id'];
-			foreach ($details as $detail) {
-				if (is_array($detail)) {
-					$k = 0;
-					foreach ($detail as $ids) {
-						// echo_spaces("ids", $ids['id']);
-						$member_list[$details['id']][$k] = $ids['id'];
-						$k++;
-					}
-				}
-			}
-		}
-	}
-
-	$my_id = get_self_tm_id();
-
-	// filter through the array to get only the other person's id and convo code
-	foreach ($member_list as $key => $subArray) {
-		foreach ($subArray as $value) {
-			if ($value !== $my_id) {
-				$trimmed_member_list[$key] = $value;
-			}
-		}
-	}
-
-	foreach ($trimmed_member_list as $key => $id) {
-		// get the names of the conversation participants
-		try {
-			$person_response = $platform->get("/team-messaging/v1/persons/{$id}");
-			$convo_names[$key] = $person_response->json()->firstName . " " . $person_response->json()->lastName;
-		} catch (\RingCentral\SDK\Http\ApiException $e) {
-			echo_spaces("Person Error info", $e->getMessage() . " " . $id);
-		}
-	}
-
-	return $convo_names;
+	echo "</select></td></tr>";
 }
 
-function post_to_tm($people, $meeting_link) {
+function ringcentral_gen_and_send_six_digit_code ($to) {
+// Include Libraries
+	require('includes/vendor/autoload.php');
+
+	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+	$dotenv->load();
+
+	$from = $_ENV['RC_MOBILE_SENDING_NUMBER'];
+
+	$six_digit_code = rand(100000, 999999);
+	$_SESSION['six_digit_code'] = $six_digit_code;
+	$_SESSION['last_four'] = substr($to, -4);
+
+	$message = "You or another person has requested to use this number for two-factor authentication. 
+        To authenticate 2FA please enter the following code on the validation page: $six_digit_code";
+
+	// connect to SDK with credentials in the DB
 	$controller = ringcentral_sdk();
-	$platform = $controller['platform'];
 
-	foreach ($people as $key => $value) {
+	try {
+		$apiResponse = $controller['platform']->post('/restapi/v1.0/account/~/extension/~/sms',
+			array('from' => array('phoneNumber' => $from),
+				'to' => array(array('phoneNumber' => $to)),
+				'text' => $message,)
+        );
+	}
+	catch (\RingCentral\SDK\Http\ApiException $e) {
+		// craft a friendly message here.
+		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
+	}
+}
 
-//		echo_spaces("key", $key);
+function ringcentral_create_webhook_subscription ($jwt) {
+	// create watching subscription for opt Out messages
 
-		$endpoint = "/team-messaging/v1/chats/{$key}/posts";
-		$message = "Hi, I have created a meeting for us, the link is: " . $meeting_link;
+	$subscription_url = "https://" . $_SERVER['HTTP_HOST'] ;
+	require(__DIR__ . '/vendor/autoload.php');
+	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
-		$body = array(
-			'text' => $message,
+	$url_suffix = $_ENV['APP_HOST_URL_SUFFIX'];
+	$subscription_url .= $url_suffix ;
+
+	$sdk = ringcentral_sdk($jwt);
+
+	try {
+		$api_call = $sdk->platform()->post('/subscription',
+			array(
+				"eventFilters" => array(
+					"/restapi/v1.0/account/~/extension/~/message-store/instant?type=SMS",
+				),
+				"expiresIn" => "315360000",
+				"deliveryMode" => array(
+					"transportType" => "WebHook",
+					// need full URL for this to work as well
+					"address" => $subscription_url,
+				)
+			)
 		);
-
-//		echo_spaces("endpoint string", $endpoint);
-//		echo_spaces("message", $message, 2);
-
-		try {
-			$response = $platform->post($endpoint, $body);
-		} catch (\RingCentral\SDK\Http\ApiException $e) {
-			echo_spaces("chat post error info", $e->getMessage() );
-		}
+		$webhook_id = $api_call->json()->id;
 	}
-
-}
-
-function get_self_tm_id() {
-	$controller = ringcentral_sdk();
-	$platform = $controller['platform'];
-
-	$endpoint = "/restapi/v1.0/glip/chats";
-
-	$params = [
-		'type' => array('Personal',),
-//        'type' => array( 'Everyone', 'Group', 'Personal', 'Direct', 'Team' ),
-	];
-
-	try {
-		$response = $platform->get($endpoint, $params);
-		$resp_array = json_decode(json_encode($response->json()), true);
-//		echo_spaces("Personal chat response array", $resp_array);
-//		echo_spaces("Personal chat id", $resp_array['records'][0]['members'][0]['id']);
-		$self_id = $resp_array['records'][0]['members'][0]['id'];
-
-	} catch (\RingCentral\SDK\Http\ApiException $e) {
-		echo_spaces("Chats Error info", $e->getMessage());
+	catch (\RingCentral\SDK\Http\ApiException $e) {
+		echo_spaces("create_webhook API Exception", $e->getMessage());
+		exit();
 	}
-	return $self_id;
+	return $webhook_id;
 }

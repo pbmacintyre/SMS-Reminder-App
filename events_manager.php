@@ -9,7 +9,7 @@ require_once('includes/ringcentral-functions.inc');
 require_once('includes/ringcentral-php-functions.inc');
 require_once('includes/ringcentral-db-functions.inc');
 
-show_errors();
+//show_errors();
 
 function show_form($message, $print_again = false) {
 	page_header();
@@ -29,84 +29,16 @@ function show_form($message, $print_again = false) {
                 </td>
             </tr>
 			<?php list_existing_events(); ?>
-            <tr>
-                <td class="addform_left_col">
-                    <p style='display: inline;'>First Name:</p>
-					<?php required_field(); ?>
-                </td>
-                <td class="addform_right_col"><input type="text" name="firstname" value="<?php
-					if ($print_again) {
-						echo strip_tags($_POST['firstname']);
-					}
-					?>">
-                </td>
-            </tr>
-            <tr>
-                <td class="addform_left_col_even">
-                    <p style='display: inline;'>Last Name:</p>
-					<?php required_field(); ?>
-                </td>
-                <td class="addform_right_col_even"><input type="text" name="lastname" value="<?php
-					if ($print_again) {
-						echo strip_tags($_POST['lastname']);
-					}
-					?>">
-                </td>
-            </tr>
-
-            <tr>
-                <td class="addform_left_col">
-                    <p style='display: inline;'>Mobile Number:</p>
-					<?php required_field(); ?>
-                </td>
-                <td class="addform_right_col"><input type="text" name="mobile" value="<?php
-					if ($print_again) {
-						echo strip_tags($_POST['mobile']);
-					}
-					?>" placeholder="Format: +19991234567">
-                </td>
-            </tr>
-            <tr>
-                <td class="addform_left_col_even">
-                    <p style='display: inline;'>Grant Mobile Consent:</p>
-					<?php required_field(); ?>
-                </td>
-                <td class="addform_right_col_even"><input type="checkbox" name="mobile_consent" <?php
-					if ($print_again) {
-						if ($_POST['mobile_consent'] == "on") {
-							echo 'CHECKED';
-						}
-					} ?> >
-                    <p style="color: #008ec2 >"When enabling Mobile consent you are agreeing to be sent SMS reminder
-                        messages from this application. </p>
-                </td>
-            </tr>
-            <tr>
-                <td class="addform_left_col">
-                    <p style='display: inline;'>eMail Address:</p>
-					<?php required_field(); ?>
-                </td>
-                <td class="addform_right_col"><input type="text" name="email" value="<?php
-					if ($print_again) {
-						echo strip_tags($_POST['email']);
-					}
-					?>">
-                </td>
-            </tr>
             <tr class="CustomTable">
                 <td colspan="2" class="CustomTableFullCol">
                     <br/>
-                    <input type="submit" class="submit_button" value=" Add a reminder event " name="add_reminder">
+                    <input type="submit" class="submit_button" value=" Edit selected event " name="edit_event">
+                    <input type="submit" class="submit_button" value=" Create New event " name="create_event">
                 </td>
             </tr>
             <tr class="CustomTable">
                 <td colspan="2" class="CustomTableFullCol">
                     <hr>
-                </td>
-            </tr>
-            <tr class="CustomTable">
-                <td colspan="2" class="CustomTableFullCol">
-                    <a href="events_manager.php"> Manage events </a>
                 </td>
             </tr>
         </table>
@@ -185,10 +117,11 @@ function check_form() {
 /* ============= */
 /*  --- MAIN --- */
 /* ============= */
-if (isset($_POST['add_reminder'])) {
+if (isset($_POST['create_event'])) {
+//if (isset($_POST['edit_event'])) {
 	check_form();
 } else {
-	$message = "Please provide the information to add yourself to an event reminder";
+	$message = "Select an event to manage or create a new one.";
 	show_form($message);
 }
 

@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2019-2024 Paladin Business Solutions
- * 
+ * Copyright (C) 2019-2025 Paladin Business Solutions
+ *
  */
 .SiteWide {
     font-family: inter, "Proxima Nova", Arial, Helvetica;
@@ -10,9 +10,9 @@
 .CustomTable {
     background-color: white !important;
     margin-top: 40px;
-    width: 1150px;
+    width: 750px;
     /* border: 1px solid red ; */
-    padding: 30px;
+    padding: 15px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -44,23 +44,26 @@
     width: 50% !important;
     vertical-align: top;
 }
-.center_col {
-    text-align: center;
-    vertical-align: top;
+.right_text {
+    text-align: right ;
 }
 /* =====================  */
 .EditTable {
     background-color: white !important;
     margin-top: 40px;
-    width: 900px;
+    width: 750px;
     /* border: 1px solid red ; */
     padding: 30px;
     margin-left: auto;
     margin-right: auto;
 }
+.EditTable td {
+    padding-left: 8px;
+    padding-right: 8px;
+}
 .EditTable input[type="text"], input[type="password"] {
     color: black;
-    width: 300px;
+    width: 200px;
 }
 .EditTable textarea {
     color: black;
@@ -177,7 +180,7 @@
     color: #008ec2;
 }
 .custom_settings {
-    width: 300px !important;
+    width: 400px !important;
 }
 /* ======================= */
 .blink_me {
@@ -189,13 +192,4 @@
     50% {
         opacity: 0;
     }
-}
-
-#pdf-container {
-    width: 80%;
-    height: 600px; /* Set the height as needed */
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #ccc;
-    overflow: hidden;
 }

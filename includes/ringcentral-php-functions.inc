@@ -15,6 +15,15 @@ function page_header() {
 function page_footer() {
     echo "</html>";
 }
+function place_logo() {
+echo <<<SHOWLOGO
+		<tr class="CustomTable">
+          <td colspan="2" class="CustomTableFullCol">
+             <img src="images/rc-logo.png"/>
+          </td>
+        </tr>
+SHOWLOGO;
+}
 /* =================== */
 /* Turn on Error codes */
 /* =================== */
@@ -61,4 +70,7 @@ function echo_link($text, $url) {
 		$url = $_ENV['RC_HOME_ADDRESS'];
 	}
 	echo "<br /><br /><a href='$url'>$text</a>" ;
+}
+function required_field() {
+	echo "<p style='color: red; display: inline'>*</p>" ;
 }
