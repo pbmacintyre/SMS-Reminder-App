@@ -72,7 +72,7 @@ function check_form() {
 	} else {
         // check that client is not already in DB, if already in DB then just use the client id from the found record
         // this will also ensure that there is only one webhook per client.
-		$eventID = $_SESSION['$eventID'];
+		$eventID = $_SESSION['eventID'];
 
 		$columns_data = array("client_id");
 		$where_info = array("mobile", $mobile);
@@ -116,7 +116,6 @@ function check_form() {
             <tr class="CustomTable">
                 <td colspan="2" class="CustomTableFullCol">
                     <img src="images/rc-logo.png"/>
-                    <h2> <?php app_name(); ?> </h2>
                     <h3 class="msg_good"> Registration is Confirmed ! </h3>
                     <hr>
                     <a href="index.php"> Return to home page </a>

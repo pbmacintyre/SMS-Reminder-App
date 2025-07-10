@@ -9,7 +9,7 @@ require_once('includes/ringcentral-functions.inc');
 require_once('includes/ringcentral-php-functions.inc');
 require_once('includes/ringcentral-db-functions.inc');
 
-show_errors();
+//show_errors();
 
 function show_form($message, $print_again = false) {
 	page_header();
@@ -173,7 +173,7 @@ function check_form() {
 		show_form($message, $print_again);
 	} else {
 		ringcentral_gen_and_send_six_digit_code($mobile);
-		$_SESSION['$eventID'] = $eventID;
+		$_SESSION['eventID'] = $eventID;
 		$_SESSION['firstname'] = $firstname;
 		$_SESSION['lastname'] = $lastname;
 		$_SESSION['mobile'] = $mobile;
