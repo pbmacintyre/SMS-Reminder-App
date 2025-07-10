@@ -66,12 +66,10 @@ function check_form() {
 		$message = "The entered 6 digit code does not match the code sent to your mobile.";
 	}
 
-
 	if ($print_again) {
 		show_form($message, $print_again);
 	} else {
-        // check that client is not already in DB, if already in DB then just use the client id from the found record
-        // this will also ensure that there is only one webhook per client.
+        // check that client is not already in DB, if already in DB then use the client id from the found record
 		$eventID = $_SESSION['eventID'];
 
 		$columns_data = array("client_id");
@@ -81,8 +79,6 @@ function check_form() {
 		if ($db_result) {
 			$client_id = $db_result[0]['client_id'];
 		} else {
-//			$webhook_subscription_id = ringcentral_create_webhook_subscription($_SESSION['raw_JWTKey']);
-
             $table = "clients";
 			$columns_data = array(
 				"first_name" => $_SESSION['firstname'],
@@ -90,7 +86,6 @@ function check_form() {
 				"mobile" => $_SESSION['mobile'],
 				"mobile_consent" => 1,
 				"email" => $_SESSION['email'],
-				"rc_sms_webhook" => "webhook goes here",
 			);
 			$client_id = db_record_insert($table, $columns_data, "client_id");
         }

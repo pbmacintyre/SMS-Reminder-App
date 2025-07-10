@@ -89,38 +89,3 @@ function ringcentral_gen_and_send_six_digit_code ($to) {
 		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
 	}
 }
-
-function ringcentral_create_webhook_subscription ($jwt) {
-	// create watching subscription for opt Out messages
-
-	$subscription_url = "https://" . $_SERVER['HTTP_HOST'] ;
-	require(__DIR__ . '/vendor/autoload.php');
-	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__)->load();
-
-	$url_suffix = $_ENV['APP_HOST_URL_SUFFIX'];
-	$subscription_url .= $url_suffix ;
-
-	$sdk = ringcentral_sdk($jwt);
-
-	try {
-		$api_call = $sdk->platform()->post('/subscription',
-			array(
-				"eventFilters" => array(
-					"/restapi/v1.0/account/~/extension/~/message-store/instant?type=SMS",
-				),
-				"expiresIn" => "315360000",
-				"deliveryMode" => array(
-					"transportType" => "WebHook",
-					// need full URL for this to work as well
-					"address" => $subscription_url,
-				)
-			)
-		);
-		$webhook_id = $api_call->json()->id;
-	}
-	catch (\RingCentral\SDK\Http\ApiException $e) {
-		echo_spaces("create_webhook API Exception", $e->getMessage());
-		exit();
-	}
-	return $webhook_id;
-}

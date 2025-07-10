@@ -5,14 +5,19 @@ require_once('includes/ringcentral-php-functions.inc');
 
 show_errors();
 
-echo_spaces("webhooks listing, if there is a blank display then there are no active webhooks");
+echo_spaces("webhooks listing, if there is a blank display then there are no active webhooks", "", 2);
 
 $controller = ringcentral_sdk();
 
 // list subscriptions then delete the one we don't need.
 
-$response = $controller['platform']->get("/subscription");
-$subscriptions = $response->json()->records;
+try {
+	$response = $controller['platform']->get("/subscription");
+	$subscriptions = $response->json()->records;
+} catch (Exception $e) {
+	echo_spaces("catch error",  $e->getMessage());
+}
+
 
 foreach ($subscriptions as $subscription) {
     echo_spaces("Subscription ID", $subscription->id);

@@ -105,8 +105,11 @@ function show_form($message, $print_again = false) {
                 </td>
             </tr>
             <tr class="CustomTable">
-                <td colspan="2" class="CustomTableFullCol">
+                <td class="CustomTableFullCol">
                     <a href="events_manager.php"> Manage events </a>
+                </td>
+                <td class="CustomTableFullCol">
+                    <a href="create_webhook.php"> Create Apps Webhook </a>
                 </td>
             </tr>
         </table>
