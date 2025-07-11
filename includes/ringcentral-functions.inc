@@ -59,7 +59,7 @@ function list_existing_events() {
 }
 
 function ringcentral_gen_and_send_six_digit_code ($to) {
-// Include Libraries
+	// Include Libraries
 	require('includes/vendor/autoload.php');
 
 	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -88,4 +88,51 @@ function ringcentral_gen_and_send_six_digit_code ($to) {
 		// craft a friendly message here.
 		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
 	}
+}
+function send_stop_sms($mobile) {
+	// find the client record
+	$table = "clients";
+	$columns_data = array("client_id");
+	$where_info = array("mobile", $mobile);
+	$db_result = db_record_select($table, $columns_data, $where_info);
+
+	$clientId = $db_result[0]['client_id'];
+
+	// remove client record from both clients and reminders tables
+	$table = "clients";
+	$where_col = "client_id";
+	$where_data = $clientId;
+	db_record_delete ($table, $where_col, $where_data);
+
+	$table = "reminders";
+	db_record_delete ($table, $where_col, $where_data);
+
+	// send out SMS that they have been removed from the reminders app
+	$endpoint = 'https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/sms';
+
+	// Include Libraries
+	require('includes/vendor/autoload.php');
+
+	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+	$dotenv->load();
+
+	$from = $_ENV['RC_MOBILE_SENDING_NUMBER'];
+	$message = "You have been removed from the SMS reminders app with your STOP request. You will have to re-enter any reminders and renew your consent if you want to receive reminders from this app again in the future.";
+
+	// connect to SDK with credentials in the DB
+	$controller = ringcentral_sdk();
+
+	try {
+		$apiResponse = $controller['platform']->post('/restapi/v1.0/account/~/extension/~/sms',
+			array('from' => array('phoneNumber' => $from),
+				'to' => array(array('phoneNumber' => $mobile)),
+				'text' => $message,)
+		);
+	}
+	catch (\RingCentral\SDK\Http\ApiException $e) {
+		// craft a friendly message here.
+		$return_message = "There was an error sending the SMS stop confirmation message, Please try again later <br/>" . $e;
+	}
+
+	return ;
 }

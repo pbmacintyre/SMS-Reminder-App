@@ -4,11 +4,9 @@
 require_once(__DIR__ . '/includes/ringcentral-php-functions.inc');
 require_once(__DIR__ . '/includes/ringcentral-db-functions.inc');
 require_once(__DIR__ . '/includes/ringcentral-functions.inc');
-require_once(__DIR__ . '/includes/ringcentral-curl-functions.inc');
 
-//show_errors();
-//echo_spaces("cron running");
-//exit();
+show_errors();
+
 require(__DIR__ . '/includes/vendor/autoload.php');
 
 Dotenv\Dotenv::createImmutable(__DIR__ . "/includes")->load();
@@ -18,6 +16,30 @@ $client_secret = $_ENV['RC_APP_CLIENT_SECRET'];
 
 $destination_array = array();
 
+$today = date("Y-m-d");
+//echo_spaces("today", $today);
+//exit();
+
+// get all reminders for today
+$table = "reminders";
+$columns_data = array ("event_id" );
+$where_info = array ("reminder_date", $today);
+$event_reminders_db_result = db_record_select($table, $columns_data, $where_info, "", 1);
+
+echo_spaces("reminders found", $event_reminders_db_result);
+
+foreach ($event_reminders_db_result as $value) {
+
+	// Get all the event information on the found events
+	$table = "events";
+	$columns_data = "*";
+	$where_info = array("event_id", $value['event_id']);
+	$events_db_result = db_record_select($table, $columns_data, $where_info);
+
+	echo_spaces("event details found", $events_db_result);
+}
+
+exit();
 $table = "clients";
 $columns_data = array("*",);
 $db_result = db_record_select($table, $columns_data);

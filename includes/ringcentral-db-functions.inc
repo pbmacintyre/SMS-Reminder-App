@@ -72,7 +72,7 @@ function db_record_insert ($table, $columns_data, $primary="") {
 	}
 }
 
-function db_record_select ($table, $columns_data, $where_info = "", $condition = "", $orderby = "") {
+function db_record_select ($table, $columns_data, $where_info = "", $condition = "", $distinct = 0, $orderby = "") {
     /*
     Usage:
     $table = "table_name";
@@ -93,7 +93,12 @@ function db_record_select ($table, $columns_data, $where_info = "", $condition =
        }
     */
     $conn = db_credentials();
-    $sql = "SELECT ";
+
+	if ($distinct == "1") {
+		$sql = "SELECT DISTINCT ";
+	} else {
+		$sql = "SELECT ";
+	}
     if ($columns_data == "*") {
         // get all fields
         $sql .= " * ";

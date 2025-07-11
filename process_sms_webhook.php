@@ -59,9 +59,8 @@ $fromNumber = htmlentities($incoming_data->body->to[0]->phoneNumber);
 //echo_spaces("From Number", $fromNumber,1);
 
 if (preg_match('/^(STOP)$/i', $incoming_sms)) {
-    //if (preg_match('/^(STOP)|(END)|(CANCEL)|(UNSUBSCRIBE)|(QUIT)$/i', $incoming_sms)) {
-    // send stop returns the db client id, then kill the SMS webhook and remove the webhook id from the DB record
-	kill_sms_webhook(send_stop_sms($fromNumber, $toNumber));
+	send_stop_sms($toNumber);
+//	echo_spaces("STOP received from", $fromNumber,1);
 }
 
 

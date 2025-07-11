@@ -1,2 +1,3 @@
 /includes/.env
 project_credentials.txt
+received_SMS_EVENT_payload.log
