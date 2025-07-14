@@ -136,3 +136,30 @@ function send_stop_sms($mobile) {
 
 	return ;
 }
+
+function send_sms($mobile, $message) {
+	// Include Libraries
+	require('includes/vendor/autoload.php');
+
+	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+	$dotenv->load();
+
+	$from = $_ENV['RC_MOBILE_SENDING_NUMBER'];
+
+	// connect to SDK with credentials in the DB
+	$controller = ringcentral_sdk();
+
+	try {
+		$apiResponse = $controller['platform']->post('/restapi/v1.0/account/~/extension/~/sms',
+			array('from' => array('phoneNumber' => $from),
+				'to' => array(array('phoneNumber' => $mobile)),
+				'text' => $message,)
+		);
+	}
+	catch (\RingCentral\SDK\Http\ApiException $e) {
+		// craft a friendly message here.
+		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
+	}
+
+	return ;
+}

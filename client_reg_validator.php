@@ -90,18 +90,18 @@ function check_form() {
 			$client_id = db_record_insert($table, $columns_data, "client_id");
         }
 
-        // get the needed event information
-		$table = "events";
-		$columns_data = array ("reminder_date");
-        $where_info = array ("event_id", $eventID);
-		$db_result = db_record_select ($table, $columns_data, $where_info);
+//        // get the needed event information
+//		$table = "events";
+//		$columns_data = array ("reminder_date");
+//        $where_info = array ("event_id", $eventID);
+//		$db_result = db_record_select ($table, $columns_data, $where_info);
 
         // save reminder data to DB
 		$table = "reminders";
 		$columns_data = array(
 			"event_id" => $eventID,
 			"client_id" => $client_id,
-			"reminder_date" => $db_result[0]['reminder_date'],
+//			"reminder_date" => $db_result[0]['reminder_date'],
 		);
 		db_record_insert($table, $columns_data);
 
