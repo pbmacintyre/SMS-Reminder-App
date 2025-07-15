@@ -77,7 +77,7 @@ function show_form($message, $print_again = false) {
 							echo 'CHECKED';
 						}
 					} ?> >
-                    <p style="color: #008ec2 >"When enabling Mobile consent you are agreeing to be sent SMS reminder
+                    <p style="color: #008ec2"> When enabling Mobile consent you are agreeing to receive SMS reminder
                         messages from this application. </p>
                 </td>
             </tr>
