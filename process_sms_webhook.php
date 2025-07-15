@@ -54,9 +54,9 @@ $toNumber = htmlentities($incoming_data->body->from->phoneNumber);
 // the customers mobile number
 $fromNumber = htmlentities($incoming_data->body->to[0]->phoneNumber);
 
-//echo_spaces("SMS Subject", $incoming_sms,1);
-//echo_spaces("To Number", $toNumber,1);
-//echo_spaces("From Number", $fromNumber,1);
+echo_spaces("SMS Subject", $incoming_sms,1);
+echo_spaces("To Number", $toNumber,1);
+echo_spaces("From Number", $fromNumber,1);
 
 if (preg_match('/^(STOP)$/i', $incoming_sms)) {
 	send_stop_sms($toNumber);

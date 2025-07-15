@@ -1,0 +1,55 @@
+/* ==========================
+======== SQL DDL ============
+============================= */
+
+/* ==========================
+==== clients table ==========
+============================= */
+
+CREATE TABLE public.clients (
+	client_id serial4 NOT NULL,
+	first_name varchar(50) NULL,
+	last_name varchar(70) NULL,
+	mobile varchar(25) NOT NULL,
+	mobile_consent int4 NOT NULL,
+	email varchar(100) NOT NULL,
+	consent_date DATE DEFAULT CURRENT_DATE,
+	CONSTRAINT clients_pk PRIMARY KEY (client_id)
+);
+
+/* ==========================
+==== reminders table ========
+============================= */
+
+CREATE TABLE public.reminders (
+	reminder_id serial4 NOT NULL,
+	event_id int4 NULL,
+	client_id int4 NULL,
+	CONSTRAINT reminder_pk PRIMARY KEY (reminder_id)
+);
+
+/* ==========================
+==== events table ===========
+============================= */
+
+CREATE TABLE public.events (
+	event_id serial4 NOT NULL,
+	event_summary varchar(100) NOT NULL,
+	event_date DATE NOT NULL,
+	reminder_date DATE NULL,
+	event_deets TEXT NULL,
+	CONSTRAINT events_pk PRIMARY KEY (event_id)
+);
+
+/* ==========================
+==== Loading test data SQL ==
+=============================
+
+INSERT INTO events (event_summary, event_date, reminder_date, event_deets)
+VALUES ('SummerFest', '2025-07-28', CURRENT_DATE, 'This is summer fest events, lots of fun and games for the whole family.');
+INSERT INTO events (event_summary, event_date, reminder_date, event_deets)
+VALUES ('FallFest', '2025-10-28', '2025-10-25', 'This is Fall fest events, lots of fun and games for the whole family.');
+INSERT INTO events (event_summary, event_date, reminder_date, event_deets)
+VALUES ('This is a new event', '2025-07-25', '2025-07-11', 'New event entry details go here');
+INSERT INTO events (event_summary, event_date, reminder_date, event_deets)
+VALUES ('Yet another event', '2025-07-29', CURRENT_DATE, 'This is yet another test event with its description here');
