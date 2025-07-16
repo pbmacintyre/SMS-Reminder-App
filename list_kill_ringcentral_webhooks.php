@@ -18,7 +18,6 @@ try {
 	echo_spaces("catch error",  $e->getMessage());
 }
 
-
 foreach ($subscriptions as $subscription) {
     echo_spaces("Subscription ID", $subscription->id);
     echo_spaces("Creation Time", $subscription->creationTime);
