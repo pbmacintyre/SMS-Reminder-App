@@ -36,14 +36,12 @@ if (!$incoming_data) {
     exit();
 }
 
-//echo_spaces("incoming payload account #", $incoming_data->body->contacts['0']->account->id);
-
 // parse out the incoming information
 $incoming_sms = htmlentities($incoming_data->body->subject);
 
-// the clients mobile number, end customer is sending to client so from and to are reversed here
+// the clients mobile number
 $toNumber = htmlentities($incoming_data->body->from->phoneNumber);
-// the customers mobile number
+// our mobile number
 $fromNumber = htmlentities($incoming_data->body->to[0]->phoneNumber);
 
 echo_spaces("SMS Subject", $incoming_sms,1);
