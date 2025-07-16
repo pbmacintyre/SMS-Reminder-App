@@ -17,8 +17,6 @@ page_header(); ?>
 			require(__DIR__ . '/includes/vendor/autoload.php');
 			$dotenv = Dotenv\Dotenv::createImmutable(__DIR__."/includes")->load();
 
-			$jwt = $_ENV['RC_JWT_KEY'];
-
 			$url_suffix = $_ENV['RC_WEBHOOK_URL_SUFFIX'];
 			$subscription_url .= $url_suffix ;
 
@@ -50,7 +48,6 @@ page_header(); ?>
 					echo_spaces("<br/>Webhook successfully created ! Webhook ID", $webhook_id, 2);
 				} catch (\RingCentral\SDK\Http\ApiException $e) {
 					echo_spaces("create_webhook API Exception", $e->getMessage());
-					exit();
 				}
 			}
 			?>

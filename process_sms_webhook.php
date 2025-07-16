@@ -9,16 +9,8 @@
 
 require_once('includes/ringcentral-functions.inc');
 require_once('includes/ringcentral-php-functions.inc');
-require_once('includes/ringcentral-db-functions.inc');
-
-require('includes/vendor/autoload.php');
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/includes")->load();
 
 //show_errors();
-
-$client_id = $_ENV['RC_APP_CLIENT_ID'];
-$client_secret = $_ENV['RC_APP_CLIENT_SECRET'];
 
 $hvt = isset($_SERVER['HTTP_VALIDATION_TOKEN']) ? $_SERVER['HTTP_VALIDATION_TOKEN'] : '';
 if (strlen($hvt) > 0) {
@@ -60,7 +52,6 @@ echo_spaces("From Number", $fromNumber,1);
 
 if (preg_match('/^(STOP)$/i', $incoming_sms)) {
 	send_stop_sms($toNumber);
-//	echo_spaces("STOP received from", $fromNumber,1);
 }
 
 
