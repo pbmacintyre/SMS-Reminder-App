@@ -7,9 +7,9 @@ require_once(__DIR__ . '/includes/ringcentral-functions.inc');
 
 show_errors();
 
-$destination_array = array();
-
+$message_array = array();
 $today = date("Y-m-d");
+$i = 0 ;
 
 // get all reminders for today
 $table = "events";
@@ -18,10 +18,7 @@ $where_info = array ("reminder_date", $today);
 $event_reminders_db_result = db_record_select($table, $columns_data, $where_info);
 
 // now find all reminders that we set for clients
-$message_array = array();
-$i = 0 ;
 foreach ($event_reminders_db_result as $value) {
-
 	$table = "reminders";
 	$columns_data = array ("client_id", );
 	$where_info = array("event_id", $value['event_id']);
@@ -38,9 +35,9 @@ foreach ($event_reminders_db_result as $value) {
 
 			$message = "Dear " . $client_db_result[0]['first_name'] . " " . $client_db_result[0]['last_name'] . ": ";
 			$message .= "You have requested that we send you a reminder on the following event information - " ;
-			$message .=	"Event Summary: '" . $value['event_summary'] . "' "; ;
+			$message .=	"Event Summary: '" . $value['event_summary'] . "' ";
 			$message .= "Event Date: " . date("M d, Y", strtotime($value['event_date']) ). " " ;
-			$message .= "Event Details: '" . $value['event_deets'] . "' REPLY STOP to discontinue receiving SMS messages from this app. "; ;
+			$message .= "Event Details: '" . $value['event_deets'] . "' REPLY STOP to discontinue receiving SMS messages from this app. ";
 
 			// add to message array
 			$message_array[$i]["mobile"] = $client_db_result[0]['mobile'];
