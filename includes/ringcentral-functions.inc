@@ -43,8 +43,8 @@ function ringcentral_sdk() {
 
 function list_existing_events() {
 	$table = "events";
-	$columns_data = array ("event_id", "event_summary", "event_date");
-	$db_result = db_record_select ($table, $columns_data, "", "", $orderby = "event_date");
+	$columns_data = array("event_id", "event_summary", "event_date");
+	$db_result = db_record_select($table, $columns_data, "", "", $orderby = "event_date");
 	echo "<tr >
           <td class='addform_left_col_even'>
           <p style='display: inline;'>Currently planned Events</p> 
@@ -58,7 +58,7 @@ function list_existing_events() {
 	echo "</select></td></tr>";
 }
 
-function ringcentral_gen_and_send_six_digit_code ($to) {
+function ringcentral_gen_and_send_six_digit_code($to) {
 	// Include Libraries
 	require('includes/vendor/autoload.php');
 
@@ -82,13 +82,13 @@ function ringcentral_gen_and_send_six_digit_code ($to) {
 			array('from' => array('phoneNumber' => $from),
 				'to' => array(array('phoneNumber' => $to)),
 				'text' => $message,)
-        );
-	}
-	catch (\RingCentral\SDK\Http\ApiException $e) {
+		);
+	} catch (\RingCentral\SDK\Http\ApiException $e) {
 		// craft a friendly message here.
 		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
 	}
 }
+
 function send_stop_sms($mobile) {
 	// find the client record
 	$table = "clients";
@@ -102,10 +102,10 @@ function send_stop_sms($mobile) {
 	$table = "clients";
 	$where_col = "client_id";
 	$where_data = $clientId;
-	db_record_delete ($table, $where_col, $where_data);
+	db_record_delete($table, $where_col, $where_data);
 
 	$table = "reminders";
-	db_record_delete ($table, $where_col, $where_data);
+	db_record_delete($table, $where_col, $where_data);
 
 	// send out SMS that they have been removed from the reminders app
 	$endpoint = 'https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/sms';
@@ -128,16 +128,15 @@ function send_stop_sms($mobile) {
 				'to' => array(array('phoneNumber' => $mobile)),
 				'text' => $message,)
 		);
-	}
-	catch (\RingCentral\SDK\Http\ApiException $e) {
+	} catch (\RingCentral\SDK\Http\ApiException $e) {
 		// craft a friendly message here.
 		$return_message = "There was an error sending the SMS stop confirmation message, Please try again later <br/>" . $e;
 	}
 
-	return ;
+	return;
 }
 
-function send_sms($mobile, $message) {
+function send_sms($controller, $mobile, $message) {
 	// Include Libraries
 	require('includes/vendor/autoload.php');
 
@@ -146,20 +145,16 @@ function send_sms($mobile, $message) {
 
 	$from = $_ENV['RC_MOBILE_SENDING_NUMBER'];
 
-	// connect to SDK with credentials in the DB
-	$controller = ringcentral_sdk();
-
 	try {
 		$apiResponse = $controller['platform']->post('/restapi/v1.0/account/~/extension/~/sms',
 			array('from' => array('phoneNumber' => $from),
 				'to' => array(array('phoneNumber' => $mobile)),
 				'text' => $message,)
 		);
-	}
-	catch (\RingCentral\SDK\Http\ApiException $e) {
+	} catch (\RingCentral\SDK\Http\ApiException $e) {
 		// craft a friendly message here.
 		$return_message = "There was an error sending the validation code, Please try again later <br/>" . $e;
 	}
 
-	return ;
+	return;
 }
